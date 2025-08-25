@@ -19,4 +19,9 @@ def run():
 
     window = MainWindow()
     window.show()
+    try:
+        window.ui_service.center_window()
+    except Exception as e:
+        pass
+    
     sys.exit(app.exec())

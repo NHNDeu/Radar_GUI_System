@@ -12,7 +12,7 @@ class NavigationBar(QFrame):
         self.setObjectName("NavigationBar")
         self.setMinimumWidth(200)
         self.setMaximumWidth(250)
-
+        '''
         self.setStyleSheet("""
             #NavigationBar {
                 background-color: #F5F5F7;
@@ -38,7 +38,7 @@ class NavigationBar(QFrame):
                 color: #0066FF;
             }
         """)
-
+        '''
         self.button_group = QButtonGroup(self)
         self.button_group.setExclusive(True)
         self.buttons = {}   # store buttons info
@@ -72,7 +72,3 @@ class NavigationBar(QFrame):
     def _on_button_clicked(self, button):
         page_id = button.property("page_id")
         self.page_changed.emit(page_id)
-
-    def set_active_page(self, page_id):
-        if page_id in self.buttons:
-            self.buttons[page_id].setChecked(True)
