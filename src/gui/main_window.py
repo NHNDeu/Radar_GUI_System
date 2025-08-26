@@ -2,7 +2,7 @@ from PyQt6.QtWidgets import QMainWindow, QStatusBar
 
 from .ui_manager.ui_manager import UIManager
 from ..core.controllers.main_controller import MainController
-from ..services.ui_services.main_service import UIService
+from ..services.ui_service.main_service import UIService
 from ..core.signal_connectors.main_connector import SignalConnector
 
 class MainWindow(QMainWindow):

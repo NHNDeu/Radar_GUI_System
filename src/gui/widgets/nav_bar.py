@@ -72,3 +72,9 @@ class NavigationBar(QFrame):
     def _on_button_clicked(self, button):
         page_id = button.property("page_id")
         self.page_changed.emit(page_id)
+
+    # public api
+    def set_active_page(self, page_id):
+        """Set current active page without emitting signal"""
+        if page_id in self.buttons:
+            self.buttons[page_id].setChecked(True)

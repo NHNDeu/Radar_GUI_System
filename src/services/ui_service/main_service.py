@@ -1,9 +1,20 @@
-from PyQt6.QtWidgets import QApplication
+from PyQt6.QtWidgets import QApplication, QMessageBox
+from ...gui.widgets.toast import Toast
 
 class UIService:
     def __init__(self, main_window):
         self.main_window = main_window
         self.ui_manager = main_window.ui_manager
+
+    def show_toast(self, message, duration=3000):
+        """show Toast notification
+
+        Args:
+            message: The message to display
+            duration: The duration to display the notification (milliseconds)
+        """
+        toast = Toast(self.main_window, message, duration)
+        toast.show()
 
     def center_window(self):
         '''Center the main window on the screen'''
@@ -24,3 +35,9 @@ class UIService:
     def set_active_page(self, page_id):
         if page_id in self.ui_manager.nav_bar.buttons:
             self.ui_manager.nav_bar.buttons[page_id].setChecked(True)
+
+    def show_port_refresh_result(self, success, message=None):
+        if success:
+            self.show_toast("Ports list refreshed successfully")
+        else:
+            self.show_toast(f"Failed to refresh ports list: {message}", 5000)
