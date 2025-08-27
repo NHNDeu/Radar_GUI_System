@@ -77,8 +77,7 @@ class CollectSettingsView(QWidget):
         if not ports:
             return
         
-        if not self.radar_port_combo or not self.ecg_port_combo:
-            print("Warning: Port combo boxes not initialized")
+        if self.radar_port_combo is None or self.ecg_port_combo is None:
             return
 
         current_radar = self.radar_port_combo.currentText()
