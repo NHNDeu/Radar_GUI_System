@@ -13,7 +13,7 @@ class PortConnector(QObject):
         collect_view = self.ui_manager.views["collect_settings"]
         
         collect_view.refresh_ports_requested.connect(self._on_refresh_ports)
-        collect_view.port_connecting_changed.connect(self._on_port_connection_changed)
+        collect_view.port_connection_changed.connect(self._on_port_connection_changed)
         self.port_controller.ports_refreshed.connect(collect_view.update_available_ports)
         self.port_controller.error_occurred.connect(self._on_error)
 

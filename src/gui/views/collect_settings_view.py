@@ -7,7 +7,7 @@ from PyQt6.QtCore import pyqtSignal
 class CollectSettingsView(QWidget):
     # define signal
     refresh_ports_requested = pyqtSignal()
-    port_connecting_changed = pyqtSignal(str, bool) # port name, is connected
+    port_connection_changed = pyqtSignal(str, bool) # port name, is connected
 
     def __init__(self):
         super().__init__()
@@ -85,6 +85,10 @@ class CollectSettingsView(QWidget):
 
         self.radar_port_combo.clear()
         self.ecg_port_combo.clear()
+
+        for port in ports:
+            self.radar_port_combo.addItem(port)
+            self.ecg_port_combo.addItem(port)
 
         radar_idx = self.radar_port_combo.findText(current_radar)
         if radar_idx >= 0:
