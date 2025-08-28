@@ -9,6 +9,7 @@ class CollectSettingsView(QWidget):
     refresh_ports_requested = pyqtSignal()
     port_connection_changed = pyqtSignal(str, bool) # port name, is connected
 
+
     def __init__(self):
         super().__init__()
         self.radar_port_combo = None
@@ -19,7 +20,11 @@ class CollectSettingsView(QWidget):
 
     def _init_ui(self):
         main_layout = QHBoxLayout()
+        
+        left_side = QWidget()
+        left_side_layout = QVBoxLayout(left_side)
 
+        # port selection panel
         port_panel = QWidget()
         port_panel.setFixedSize(320,270)
         port_layout = QVBoxLayout(port_panel)
@@ -30,14 +35,29 @@ class CollectSettingsView(QWidget):
         self.radar_port_combo = self.radar_port_group.findChild(QComboBox)
         self.ecg_port_combo = self.ecg_port_group.findChild(QComboBox)
 
-        self.btn_refresh = QPushButton("Refresh Ports")
-        self.btn_refresh.setFixedSize(100,40)
+        self.btn_refresh = self._create_botton("Refresh Ports", 120, 47)
 
         port_layout.addWidget(self.radar_port_group)
         port_layout.addWidget(self.ecg_port_group)
         port_layout.addWidget(self.btn_refresh)
 
-        main_layout.addWidget(port_panel)
+        # collect control panel
+        conrtol_panel = QWidget()
+        conrtol_panel.setFixedSize(300,140)
+        control_layout = QVBoxLayout(conrtol_panel)
+
+        self.control_btn_group = self._create_control_group()
+        control_layout.addWidget(self.control_btn_group)
+
+        # label panel
+
+        # log panel
+
+        # layout arrangement
+        left_side_layout.addWidget(port_panel)
+        left_side_layout.addWidget(conrtol_panel)
+        left_side_layout.addStretch()
+        main_layout.addWidget(left_side)
 
         self.setLayout(main_layout)
 
@@ -72,7 +92,39 @@ class CollectSettingsView(QWidget):
         if combo and combo.currentText():
             self.port_connection_changed.emit(combo.currentText(), checked)
 
-    # public api
+    def _create_control_group(self):
+        group = QGroupBox("Control")
+        group.setFixedSize(280,120)
+
+        layout = QVBoxLayout(group)
+
+        row1_layout = QHBoxLayout()
+        row2_layout = QHBoxLayout()
+        self.btn_start = self._create_botton("Start")
+        self.btn_stop  = self._create_botton("Stop", enable=False)
+        self.btn_pause = self._create_botton("Pause", enable=False)
+        self.btn_save  = self._create_botton("Save", enable=False)
+
+        row1_layout.addWidget(self.btn_start)
+        row1_layout.addWidget(self.btn_pause)
+        row1_layout.addWidget(self.btn_stop)
+
+        row2_layout.addWidget(self.btn_save)
+        row2_layout.addStretch()
+
+        layout.addLayout(row1_layout)
+        layout.addLayout(row2_layout)
+
+        return group
+    
+    def _create_botton(self, name, H=84, W=36, enable=True):
+        self.btn = QPushButton(name)
+        self.btn.setFixedSize(H, W)
+        self.btn.setEnabled(enable)
+
+        return self.btn
+        
+    # =================== public api ===================
     def update_available_ports(self, ports):
         if not ports:
             return

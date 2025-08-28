@@ -49,9 +49,9 @@ class NavigationBar(QFrame):
         layout.setSpacing(4)
         layout.setContentsMargins(0, 20, 0, 0)
 
-        self.btn_collect_settings = self._add_nav_button("采集设置", "collect_settings", layout)
-        self.btn_display_data = self._add_nav_button("数据显示", "display_data", layout)
-        self.btn_settings = self._add_nav_button("设置", "settings", layout)
+        self.btn_collect_settings = self._add_nav_button("collect settings", "collect_settings", layout)
+        self.btn_display_data = self._add_nav_button("data disply", "display_data", layout)
+        self.btn_settings = self._add_nav_button("settings", "settings", layout)
 
         layout.addStretch()
         self.button_group.buttonClicked.connect(self._on_button_clicked)
