@@ -21,46 +21,69 @@ class CollectSettingsView(QWidget):
     def _init_ui(self):
         main_layout = QHBoxLayout()
         
+        # ======= left side =======
         left_side = QWidget()
         left_side_layout = QVBoxLayout(left_side)
 
         # port selection panel
         port_panel = QWidget()
-        port_panel.setFixedSize(320,270)
+        port_panel.setFixedWidth(320)
         port_layout = QVBoxLayout(port_panel)
 
-        self.radar_port_group = self._create_port_group("Radar Port", 921600)
+        self.radar_dpct_port_group = self._create_port_group("DPCT Port", 921600)
+        self.radar_TI_port_group = self._create_port_group('TI Port', 921600) # baud rate need fix
+        self.radar_Rhine_port_group = self._create_port_group('Rhine Port', 921600) # baud rate need fix
         self.ecg_port_group = self._create_port_group("ECG Port", 115200)
 
-        self.radar_port_combo = self.radar_port_group.findChild(QComboBox)
+        self.radar_dpct_port_combo = self.radar_dpct_port_group.findChild(QComboBox)
+        self.radar_TI_port_combo = self.radar_TI_port_group.findChild(QComboBox)
+        self.radar_Rhine_port_combo = self.radar_Rhine_port_group.findChild(QComboBox)
         self.ecg_port_combo = self.ecg_port_group.findChild(QComboBox)
 
         self.btn_refresh = self._create_botton("Refresh Ports", 120, 47)
 
-        port_layout.addWidget(self.radar_port_group)
+        port_layout.addWidget(self.radar_dpct_port_group)
+        port_layout.addWidget(self.radar_TI_port_group)
+        port_layout.addWidget(self.radar_Rhine_port_group)
         port_layout.addWidget(self.ecg_port_group)
         port_layout.addWidget(self.btn_refresh)
 
-        # collect control panel
-        conrtol_panel = QWidget()
-        conrtol_panel.setFixedSize(300,140)
-        control_layout = QVBoxLayout(conrtol_panel)
-
-        self.control_btn_group = self._create_control_group()
-        control_layout.addWidget(self.control_btn_group)
-
-        # label panel
-
-        # log panel
-
         # layout arrangement
         left_side_layout.addWidget(port_panel)
-        left_side_layout.addWidget(conrtol_panel)
         left_side_layout.addStretch()
         main_layout.addWidget(left_side)
 
+        # ======= right side =======
+        right_side = QWidget()
+        right_side_layout = QVBoxLayout(right_side)
+
+        # collect control panel
+        control_panel = QWidget()
+        control_panel.setFixedSize(300,140)
+        control_layout = QVBoxLayout(control_panel)
+
+        self.control_btn_group = self._create_control_group()
+        control_layout.addWidget(self.control_btn_group)
+        
+        # label panel
+        label_panel = QWidget()
+        label_panel.setFixedWidth(300)
+        label_layout = QVBoxLayout(label_panel)
+
+        self.label_group = self._create_label_group()
+        label_layout.addWidget(self.label_group)
+
+        # log panel
+
+        # right arrangement
+        right_side_layout.addWidget(control_panel)
+        right_side_layout.addWidget(label_panel)
+        right_side_layout.addStretch()
+        main_layout.addWidget(right_side)
+
         self.setLayout(main_layout)
 
+    # region port group
     def _create_port_group(self, title, baud_rate):
         group = QGroupBox(title)
         group.setFixedSize(300,90)
@@ -87,11 +110,13 @@ class CollectSettingsView(QWidget):
 
     def _on_port_group_toggled(self, port_name, checked):
         """Handle port group toggle events."""
-        port_id = port_name.split()[0]  # Get port type (Radar or ECG)
+        port_id = port_name.split()[0]  # Get port type (Radars or ECG)
         combo = self.radar_port_combo if "Radar" in port_name else self.ecg_port_combo
         if combo and combo.currentText():
             self.port_connection_changed.emit(combo.currentText(), checked)
+    # endregion
 
+    # region control group
     def _create_control_group(self):
         group = QGroupBox("Control")
         group.setFixedSize(280,120)
@@ -116,15 +141,53 @@ class CollectSettingsView(QWidget):
         layout.addLayout(row2_layout)
 
         return group
-    
+    # endregion
+
+    # region lable group
+    def _create_label_group(self):
+        group = QGroupBox("Label")
+        layout = QVBoxLayout(group)
+        
+        row1_layout = QHBoxLayout()
+        row2_layout = QHBoxLayout()
+        row3_layout = QHBoxLayout()
+
+        self.btn_None = self._create_botton("None")
+        self.btn_Stand = self._create_botton("Stand")
+        self.btn_FallDown = self._create_botton("Fall Down")
+        row1_layout.addWidget(self.btn_None)
+        row1_layout.addWidget(self.btn_Stand)
+        row1_layout.addWidget(self.btn_FallDown)
+
+        self.btn_LieFlat = self._create_botton("Lie Flat")
+        self.btn_LieSide = self._create_botton("Lie Side")
+        self.btn_LieBack = self._create_botton("Lie Back") 
+        row2_layout.addWidget(self.btn_LieFlat)
+        row2_layout.addWidget(self.btn_LieSide)
+        row2_layout.addWidget(self.btn_LieBack)
+
+        self.btn_Choke = self._create_botton("Choke")
+        row3_layout.addWidget(self.btn_Choke)
+        row3_layout.addStretch()
+
+        layout.addLayout(row1_layout)
+        layout.addLayout(row2_layout)
+        layout.addLayout(row3_layout)
+        
+        return group
+
+    # endregion
+
+    # region utils
     def _create_botton(self, name, H=84, W=36, enable=True):
         self.btn = QPushButton(name)
         self.btn.setFixedSize(H, W)
         self.btn.setEnabled(enable)
 
         return self.btn
+    # endregion
         
-    # =================== public api ===================
+    # region public api
     def update_available_ports(self, ports):
         if not ports:
             return
@@ -149,3 +212,4 @@ class CollectSettingsView(QWidget):
         ecg_idx = self.ecg_port_combo.findText(current_ecg)
         if ecg_idx >= 0:
             self.ecg_port_combo.setCurrentIndex(ecg_idx)
+    # endregion
